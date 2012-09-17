@@ -97,7 +97,7 @@ module MixiPlatform
         # "r_profile_last_login"スコープについて認可されたアクセストークンが必要
         # ---
         # *Returns*:: JSONレスポンス: Hash
-        def lastLogins
+        def last_login
           lookup_friends('@me', '@friends', {params: {fields: "lastLogin"}})
         end
   
@@ -105,7 +105,7 @@ module MixiPlatform
         # "r_profile_last_login"スコープについて認可されたアクセストークンが必要
         # ---
         # *Returns*:: JSONレスポンス: Hash
-        def lastLogins
+        def user_hash
           get(endpoint_myself(ENDPOINT_PREFIX), {params: {fields: "userHash"}})
         end
   
