@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/ruby4mixi/version', __FILE__)
+require File.expand_path('../lib/mixi/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Kazuhiro Hayashi"]
@@ -13,5 +13,5 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "ruby4mixi"
   gem.require_paths = ["lib"]
-  gem.version       = Ruby4mixi::VERSION
+  gem.version       = Mixi::VERSION
 end
