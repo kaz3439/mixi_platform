@@ -1,4 +1,5 @@
-module Mixi
+module MixiPlatform
+  class OAuth
      module Configure
           attr_accessor :consumer_key, :consumer_secret, :redirect_url
    
@@ -28,4 +29,5 @@ module Mixi
           end
   
       end #Configure
-end #Mixi
+  end #OAuth
+end #MixiPlatform

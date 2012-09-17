@@ -33,7 +33,7 @@ require 'net/https'
 require 'uri'
 require 'json'
 
-module Mixi
+module MixiPlatform
   module GraphApi
     module Client
   
@@ -47,14 +47,14 @@ module Mixi
       #  # APIを利用するクラスを継承
       #  require_relative 'base'
       #
-      #  module Mixi
+      #  module MixiPlatform
       #    module GraphApi
       #      module Client
-      #        class People < Mixi::GraphApi::Client::Base
+      #        class People < MixiPlatform::GraphApi::Client::Base
       #
-      #  # 継承されたクラスでは、Mixi::OAuth::Token
+      #  # 継承されたクラスでは、MixiPlatform::OAuth::Token
       #  # のオブジェクトを渡して初期化する
-      #  Mixi::GraphApi::Client::People.new(token)
+      #  MixiPlatform::GraphApi::Client::People.new(token)
       #
       #  #Graph APIの指定のエンドポイントに対しGETをする
       #  ENDPOINT_PREFIX = '/2/people'
@@ -72,7 +72,7 @@ module Mixi
         # 初期化メソッドでTokenのインスタンスを受け取る
         # ---
         # *Arguments*
-        # (required) token: Mixi::OAuth::Token
+        # (required) token: MixiPlatform::OAuth::Token
         def initialize(token)
           @token = token
         end
@@ -173,4 +173,4 @@ module Mixi
 
     end #Client
   end #GraphApi
-end #Mixi
+end #MixiPlatform

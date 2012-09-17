@@ -26,7 +26,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# = mixi/oauth.rb - Token取得用クラスメソッド
+# = mixi_platform/oauth.rb - Token取得用クラスメソッド
 #
 
 require 'net/https'
@@ -34,7 +34,7 @@ require 'uri'
 require 'json'
 require_relative 'oauth/configure'
 
-module Mixi
+module MixiPlatform
  
       HOST = 'secure.mixi-platform.com' 
       PATH = '/2/token'
@@ -45,20 +45,20 @@ module Mixi
       #
       # = USAGE
       #
-      # #Mixi::OAuthのインスタンスを作成して、必要な値をセットする
-      # Mixi::OAuth.configure do |config|
+      # #MixiPlatform::OAuthのインスタンスを作成して、必要な値をセットする
+      # MixiPlatform::OAuth.configure do |config|
       #   config.consumer_key    = "a_consumer_key" 
       #   config.consumer_secret = "a_consumer_secret" 
       #   config.redirect_url    = "a_redirect_url" 
       # end
       #
       # #Authorizaiton Codeを使って新規にTokenを取得
-      # token = Mixi::OAuth.create_token('an_authorization_code')
+      # token = MixiPlatform::OAuth.create_token('an_authorization_code')
       #
       # #Refresh Tokenを使ってAccess Tokenのリフレッシュ
-      # token = Mixi::OAuth.refresh_token('an_refresh_token')
+      # token = MixiPlatform::OAuth.refresh_token('an_refresh_token')
       class OAuth
-        include Mixi::OAuth::Configure
+        include MixiPlatform::OAuth::Configure
   
       class << self
         # Authorization Codeからアクセストークンを取得する
@@ -92,7 +92,7 @@ module Mixi
           if credentials?
             query_params = credentials.merge(params)
           else
-            raise Mixi::ConfigrationError, 'configuration error.'  
+            raise MixiPlatform::ConfigrationError, 'configuration error.'  
           end
   
           endpoint = URI::HTTP.build({host: HOST, path: PATH})
@@ -109,4 +109,4 @@ module Mixi
       private_class_method :get_token
   
       end #OAuth
-end #Mixi
+end #MixiPlatform

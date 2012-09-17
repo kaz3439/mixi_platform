@@ -26,14 +26,14 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# = mixi4ruby/graph_api/client/people.rb - People API用クラス
+# = mixi_platform/graph_api/client/people.rb - People API用クラス
 #
 # *Reference* 
 #  http://developer.mixi.co.jp/connect/mixi_graph_api/mixi_io_spec_top/people-api/
 
 require_relative 'base'
 
-module Mixi
+module MixiPlatform
   module GraphApi
     module Client
   
@@ -44,16 +44,16 @@ module Mixi
       #
       # = USAGE
       # #ユーザのTokenを渡して初期化する
-      # token = Mixi::GraphApi::Client::Token.create_by_user_id([USER_ID])
+      # token = MixiPlatform::GraphApi::Client::Token.create_by_user_id([USER_ID])
       # token.get!([AUTHORIZATION_CODE])
-      # people = Mixi::GraphApi::Client::People.new(token)
+      # people = MixiPlatform::GraphApi::Client::People.new(token)
       #
       # #友人一覧を取得する
       # friends = people.lookup_friends
       #
       # #自分のプロフィールを取得する
       # my_profile = people.get_my_profile
-      class People < Mixi::GraphApi::Client::Base
+      class People < MixiPlatform::GraphApi::Client::Base
   
         ENDPOINT_PREFIX = '/2/people'
   
@@ -120,4 +120,4 @@ module Mixi
       end #People
     end #Client
   end #GraphApi
-end #Mixi
+end #MixiPlatform

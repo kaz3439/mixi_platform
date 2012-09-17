@@ -1,4 +1,4 @@
-module Mixi
+module MixiPlatform
       class Error < StandardError; end
   module OAuth
       class ConfigrationError < Mixi::Error; end

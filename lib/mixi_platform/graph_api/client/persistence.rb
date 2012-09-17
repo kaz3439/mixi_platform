@@ -26,78 +26,78 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# = mixi4ruby/graph_api/client/groups.rb - Groups API用クラス
+# = mixi_platform/graph_api/client/persistence.rb - Persistence API用クラス
 #
-# *Reference* 
-#  http://developer.mixi.co.jp/connect/mixi_graph_api/mixi_io_spec_top/groups-api/
-
+  
+require 'json'
+  
 require_relative 'base'
 
-module Mixi
+module MixiPlatform  
   module GraphApi
     module Client
   
       #
       #
       # = Description
-      # Groups APIを叩くためのクラス
+      # Persistence APIを叩くためのクラス
       #
       # = USAGE
       # #ユーザのTokenを渡して初期化する
-      # token = Mixi::GraphApi::Client::Token.create_by_user_id([USER_ID])
-      # token.get!([AUTHORIZATION_CODE])
-      # groups = Mixi::GraphApi::Client::Groups.new(token)
+      # token = GraphApi::Client::Token.create("etgea4323dd")
+      # token.get!("agfeaefgrbvgarhraegf45tqgravdfagqatwrb5b42")
+      # persistance = GraphApi::Client::Persistence.new(token)
       #
-      # #グループ一覧を取得する
-      # groups = groups.lookup_my_groups
+      # #自分のUser Dataを取得する
+      # user_data = persistance.get_my_user_data
       #
-      class Groups < Mixi::GraphApi::Client::Base
+      # #ユーザーデータを登録する
+      # response = persistance.get_friends_user_data({hoge: "fuga"})
+      class Persistence < MixiPlatform::GraphApi::Client::Base
   
-        ENDPOINT_PREFIX = '/2/groups'
+        ENDPOINT_PREFIX = '/2/apps/appdata'
   
-        # ユーザのグループ一覧を取得
+        # 自分のuser dataを取得する
         # ---
         # *Returns*:: JSONレスポンス: Hash
-        def get_my_groups(args={})
-          endpoint = "#{ENDPOINT_PREFIX}/#{ME}"
-          get(endpoint, args)
+        def get_my_user_data(params={})
+          options ={params: {}, headers: {}, body: ''}
+          options[:params].merge!(params)
+          get(self.endpoint_myself(ENDPOINT_PREFIX), options)
         end
   
-        # ユーザが登録しているグループ名のみを一覧で取得
+        # 友人のuser dataを取得する
         # ---
         # *Returns*:: JSONレスポンス: Hash
-        def lookup_my_groups
-          get_my_groups
+        def get_friends_user_data(params={})
+          options ={params: {}, headers: {}, body: ''}
+          options[:params].merge!(params)
+          get(self.endpoint_myself(ENDPOINT_PREFIX), options)
         end
   
-        # ユーザが登録しているグループ一覧とその所属メンバーを取得
+        # user dataを登録する
         # ---
         # *Returns*:: JSONレスポンス: Hash
-        def get_my_groups_with_members
-          get_my_groups({paras: {fields: "members"}})
+        def register_user_data(req_body_hash)
+  	params = {}
+          header = {'Content-Type' => 'application/json'}
+  	body = JSON(req_body_hash)
+          options = {params: params, headers: header, body: body}
+          post(self.endpoint_myself(ENDPOINT_PREFIX), options)
         end
   
-        # ユーザが登録しているあるグループの取得
-        # ---
-        # *Returns*:: JSONレスポンス: Hash
-        def get_a_group(group_id)
-          endpoint = "#{ENDPOINT_PREFIX}/#{ME}/#{group_id}"
-          get(endpoint)
-        end
-  
-        # グループを作成
+        # user dataを削除する
         # ---
         # *Arguments*
-        # (required) title: String
-        # (required) members: String (User IDs)
+        # keys: Array
         # *Returns*:: JSONレスポンス: Hash
-        def create_a_group(title, members=[])
-          endpoint = "#{ENDPOINT_PREFIX}/#{ME}"
-          args = {params: {title: title, members: members}}
-          post(endpoint, args)
+        def delete_user_data(keys=[])
+          options ={params: {fields: keys.join(',') }, headers: {}, body: ''}
+          options[:params].merge!(params)
+          delete(self.endpoint_myself(ENDPOINT_PREFIX), params)
         end
   
-      end #Groups
+      end #Persistent
     end #Client
-  end #GraphApi
-end #Mixi
+  end #GraphApiClient
+end #MixiPlatform
