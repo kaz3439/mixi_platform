@@ -31,60 +31,58 @@ require_relative 'oauth'
 # = app/models/graph_api/client/people.rb - Access Token, Refresh Tokenを管理するクラス
 #
 
-#require_relative 'oauth'
+module MixiPlatform
 
-#
-#
-# = Description
-# ActiveRecordを使ってTokenを管理する
-# 
-# = USAGE
-# #tokenを新規に取得する
-# token.GraphApi::Client::Token.create_by_user_id("gedafeg")
-# token.configure({"consumer_key"    => "a_consumer_key", 
-#                  "consumer_secret" => "a_consumer_secret",
-#                  "redirect_url"    => "a_redirect_url"
-#                 })
-# token.get!
-#
-# #tokenが有効期限切れだった場合リフレッシュする
-# token.refresh! if token.expired?
-#
-class GraphApi::Client::Token < ActiveRecord::Base
-  attr_accessible :access_token, :expires_in, :refresh_token, :user_id
-  attr_accessor :oauth
+  #
+  #
+  # = Description
+  # ActiveRecordを使ってTokenを管理する
+  # 
+  # = USAGE
+  # #tokenを新規に取得する
+  # MixiPlatform::OAuth.configure do |config|
+  #   config.consumer_key    = "a_consumer_key" 
+  #   config.consumer_secret = "a_consumer_secret" 
+  #   config.redirect_url    = "a_redirect_url" 
+  # end
+  # MixiPlatform::Token.new("gedafeg")
+  #
+  # #tokenが有効期限切れだった場合リフレッシュする
+  # token.refresh! if token.expired?
+  #
+  class Token
+    attr_accessor :access_token, :expires_in, :refresh_token, :updated_at, :oauth
 
-  # Access Tokenが有効期限切れかどうかチェックする
-  # ---
-  # *Returns*:: Boolean
-  def expired?
-    (Time.now - self.updated_at) > expires_in
-  end
-
-  def configure(option={})
-    GraphApi::Client::OAuth.keys.each do |key|
-      instance_variable_set("@#{key}", options[key] || Graph::Client::OAuth.instance_variable_get("@#{key}"))
+    # Tokenを新規に取得する
+    # ---
+    # *Arguments*
+    # (required) authorization_code: String    
+    def initialize(authorization_code)
+      token_hash = OAuth.create_token(authorization_code)
+      raise MixiPlatform::HTTPError, token_hash['error'] if token_hash.has_key? 'error'
+      @access_token  =  token_hash['access_token']
+      @refresh_token = token_hash['refresh_token']
+      @expires_in    = token_hash['expires_in']
+      @updated_at    = Time.now
     end
-  end
-  # Tokenを新規に取得する
-  # ---
-  # *Arguments*
-  # (required) authorization_code: String
-  def get!(authorization_code)
-    token_hash = GraphApi::Client::OAuth.create_token(authorization_code)
-    raise IOError, token_hash['error'] if token_hash.has_key? 'error'
-    self.update_attributes!(access_token:  token_hash['access_token'],
-                            refresh_token: token_hash['refresh_token'],
-                            expires_in:    token_hash['expires_in']) 
-  end
 
-  # Tokenを新規に取得する
-  # ---
-  def refresh!
-    token_hash = @oauth.refresh_token(self.refresh_token)
-    raise IOError, token_hash['error'] if token_hash.has_key? 'error'
-    self.update_attributes!(access_token:  token_hash['access_token'],
-                            refresh_token: token_hash['refresh_token'],
-                            expires_in:    token_hash['expires_in'])
-  end
-end
+    # Access Tokenが有効期限切れかどうかチェックする
+    # ---
+    # *Returns*:: Boolean
+    def expired?
+      (Time.now - self.updated_at) > expires_in
+    end
+  
+    # Tokenを更新する
+    # ---
+    def refresh!
+      token_hash = OAuth.refresh_token(self.refresh_token)
+      raise IOError, token_hash['error'] if token_hash.has_key? 'error'
+      @access_token =  token_hash['access_token']
+      @refresh_token = token_hash['refresh_token']
+      @expires_in = token_hash['expires_in']
+      @updated_at = Time.now
+    end
+
+  end #Token
+end #MixiPlatform

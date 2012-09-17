@@ -36,77 +36,78 @@ require_relative 'oauth/configure'
 
 module MixiPlatform
  
-      HOST = 'secure.mixi-platform.com' 
-      PATH = '/2/token'
-      #
-      #
-      # = Description
-      # HTTPでアクセストークを取得するためのクラスメソッドをまとめたクラス
-      #
-      # = USAGE
-      #
-      # #MixiPlatform::OAuthのインスタンスを作成して、必要な値をセットする
-      # MixiPlatform::OAuth.configure do |config|
-      #   config.consumer_key    = "a_consumer_key" 
-      #   config.consumer_secret = "a_consumer_secret" 
-      #   config.redirect_url    = "a_redirect_url" 
-      # end
-      #
-      # #Authorizaiton Codeを使って新規にTokenを取得
-      # token = MixiPlatform::OAuth.create_token('an_authorization_code')
-      #
-      # #Refresh Tokenを使ってAccess Tokenのリフレッシュ
-      # token = MixiPlatform::OAuth.refresh_token('an_refresh_token')
-      class OAuth
-        include MixiPlatform::OAuth::Configure
+  HOST = 'secure.mixi-platform.com' 
+  PATH = '/2/token'
+  #
+  #
+  # = Description
+  # HTTPでアクセストークを取得するためのクラスメソッドをまとめたクラス
+  #
+  # = USAGE
+  #
+  # #MixiPlatform::OAuthのインスタンスを作成して、必要な値をセットする
+  # MixiPlatform::OAuth.configure do |config|
+  #   config.consumer_key    = "a_consumer_key" 
+  #   config.consumer_secret = "a_consumer_secret" 
+  #   config.redirect_url    = "a_redirect_url" 
+  # end
+  #
+  # #Authorizaiton Codeを使って新規にTokenを取得
+  # token = MixiPlatform::OAuth.create_token('an_authorization_code')
+  #
+  # #Refresh Tokenを使ってAccess Tokenのリフレッシュ
+  # token = MixiPlatform::OAuth.refresh_token('an_refresh_token')
+  class OAuth
+    include MixiPlatform::OAuth::Configure
   
-      class << self
-        # Authorization Codeからアクセストークンを取得する
-        # ---
-        # *Arguments*
-        # (required) authorzaition_code: String 
-        # *Returns*:: JSONレスポンス: Hash
-        def create_token(authorization_code, params={})
-          query_params = {grant_type: 'authorization_code',
-                          code:       authorization_code}.merge(params)
-          get_token(query_params)
-        end
+  class << self
+    # Authorization Codeからアクセストークンを取得する
+    # ---
+    # *Arguments*
+    # (required) authorzaition_code: String 
+    # *Returns*:: JSONレスポンス: Hash
+    def create_token(authorization_code, params={})
+      query_params = {grant_type: 'authorization_code',
+                      code:       authorization_code}.merge(params)
+      get_token(query_params)
+    end
   
-        # Refresh Tokenからアクセストークンを取得する
-        # ---
-        # *Arguments*
-        # (required) refresh_toekn: String 
-        # *Returns*:: JSONレスポンス: Hash
-        def refresh_token(refresh_token, params={})
-          query_params = {grant_type:    'refresh_token',
-                          refresh_token: refresh_token}.merge(params)
-          get_token(query_params)
-        end
+    # Refresh Tokenからアクセストークンを取得する
+    # ---
+    # *Arguments*
+    # (required) refresh_toekn: String 
+    # *Returns*:: JSONレスポンス: Hash
+    def refresh_token(refresh_token, params={})
+      query_params = {grant_type:    'refresh_token',
+                      refresh_token: refresh_token}.merge(params)
+      get_token(query_params)
+    end
   
-        # token取得のためのHTTPリクエストを叩く
-        # ---
-        # *Arguments*
-        # (required) refresh_toekn: String 
-        # *Returns*:: JSONレスポンス: Hash
-        def get_token(params={})
-          if credentials?
-            query_params = credentials.merge(params)
-          else
-            raise MixiPlatform::ConfigrationError, 'configuration error.'  
-          end
-  
-          endpoint = URI::HTTP.build({host: HOST, path: PATH})
-   
-          req = Net::HTTP::Post.new(endpoint.request_uri)
-          req.set_form_data(query_params)
-          https = Net::HTTP.new(endpoint.host, 443)
-          https.use_ssl = true
-            res = https.request(req)
-            res_body = JSON.parse(res.body)
-        end
+    # token取得のためのHTTPリクエストを叩く
+    # ---
+    # *Arguments*
+    # (required) refresh_toekn: String 
+    # *Returns*:: JSONレスポンス: Hash
+    def get_token(params={})
+      if credentials?
+        query_params = credentials.merge(params)
+      else
+        raise MixiPlatform::ConfigrationError, 'configuration error'  
       end
   
-      private_class_method :get_token
+      endpoint = URI::HTTP.build({host: HOST, path: PATH})
+   
+      req = Net::HTTP::Post.new(endpoint.request_uri)
+      req.set_form_data(query_params)
+      https = Net::HTTP.new(endpoint.host, 443)
+      https.use_ssl = true
+        res = https.request(req)
+        res_body = JSON.parse(res.body)
+    end
+
+  end
   
-      end #OAuth
+  private_class_method :get_token
+  
+  end #OAuth
 end #MixiPlatform
