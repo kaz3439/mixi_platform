@@ -1,4 +1,4 @@
-# Ruby4mixi
+# MixiPlatform
 
 TODO: Write a gem description
 
