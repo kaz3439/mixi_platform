@@ -1,0 +1,3 @@
+module Ruby4mixi
+  VERSION = "0.0.1"
+end
